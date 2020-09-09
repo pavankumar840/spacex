@@ -7,22 +7,18 @@ function Home() {
     const [launch_success, setlaunchsuccess] = useState(true)
     const [land_success, setlandsuccess] = useState(true)
     const [launch_year, setlaunchyear] = useState(2014)
-
     let path = `https://api.spacexdata.com/v3/launches?limit=100&launch_success=${launch_success}&land_success=${land_success}&launch_year=${launch_year}`
 
     useEffect(() => {
         axios.get(path)
             .then(res => {
-                console.log(path)
+                console.log(res.data)
                 setProjects(res.data)
             })
             .catch(err => {
                 console.log(err)
             })
     }, [launch_success, land_success, launch_year]);
-    const addbg = (e) => {
-        e.target.className = 'change_bg'
-    }
     return (
         <div>
             <h1>SpaceX launch programs</h1>
@@ -35,31 +31,29 @@ function Home() {
                     <div className="row m-0">
                     {years.map((year, i) => (
                         <div className="col-6 y_selected pr-0 pl-0" key={i}>
-                            <button type="radio" value={year}
-                              onClick={e => 
-                              {
+                            <button className={year == launch_year ? 'change_bg':'' } value={year}
+                              onClick={e => {
                                   setlaunchyear(e.target.value)
-                                  addbg(e)
-                              }}>{year}</button>
+                                   }}>{year}</button>
                             </div>
                         ))}
                     </div>
                     <div className="l_y">Successful-launch</div>
                     <div className="row">
                     <div className="col-6 y_selected pr-0 pl-0">
-                        <button onClick={() => setlaunchsuccess(true)}>True</button>
+                        <button className={launch_success ? 'change_bg': ''} onClick={() => setlaunchsuccess(true)}>True</button>
                     </div>
                     <div className="col-6 y_selected pr-0 pl-0">
-                        <button onClick={() => setlaunchsuccess(false)}>False</button>
+                        <button className={!launch_success ? 'change_bg': ''} onClick={() => setlaunchsuccess(false)}>False</button>
                     </div>
                     </div>
                     <div className="l_y">Successful-landing</div>
                     <div className="row">
                     <div className="col-6 y_selected pr-0 pl-0">
-                        <button onClick={() => setlandsuccess(true)}>True</button>
+                        <button className={land_success ? 'change_bg': ''} onClick={() => setlandsuccess(true)}>True</button>
                     </div>
                     <div className="col-6 y_selected pr-0 pl-0">
-                        <button onClick={() => setlandsuccess(false)}>False</button>
+                        <button className={!land_success ? 'change_bg': ''} onClick={() => setlandsuccess(false)}>False</button>
                     </div>
                     </div>
                 </div>
@@ -75,13 +69,14 @@ function Home() {
                                     <div><b>{project.mission_name} #{project.flight_number}</b></div>
                                     <div><b>Mission ids :</b>{project.mission_id}</div>
                                     <div><b>Launch Year :</b>{project.launch_year}</div>
-                                    <div><b>Successful Launch :</b>{project.launch_success}</div>
-                                    <div><b>Successful Landing :</b>{project.launch_success}</div>
+                                    <div><b>Successful Launch :</b>{JSON.stringify(project.launch_success)}</div>
+                                    <div><b>Successful Landing :</b>{JSON.stringify(launch_success)}</div>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
+                {projects.length === 0 ? <div className="text-center"><h4>No matchs found</h4></div>:''}
             </div>
         </div>
    
